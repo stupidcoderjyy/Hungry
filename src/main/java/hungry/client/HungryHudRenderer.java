@@ -8,9 +8,7 @@ import net.minecraft.client.render.RenderTickCounter;
 
 public class HungryHudRenderer {
     public static void register() {
-        HudRenderCallback.EVENT.register((DrawContext context, RenderTickCounter tickDelta) -> {
-            renderProgressBar(context);
-        });
+        HudRenderCallback.EVENT.register((DrawContext context, RenderTickCounter tickDelta) -> renderProgressBar(context));
     }
 
     private static void renderProgressBar(DrawContext context) {
@@ -28,7 +26,7 @@ public class HungryHudRenderer {
         int barWidth = 180;
         int barHeight = 2;
         int x = (screenWidth - barWidth) / 2;
-        int y = screenHeight - 32;
+        int y = screenHeight - 44;
 
         // Draw background
         context.fill(x, y, x + barWidth, y + barHeight, 0xFF000000); // Black background
