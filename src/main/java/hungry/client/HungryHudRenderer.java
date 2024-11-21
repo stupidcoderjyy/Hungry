@@ -1,6 +1,7 @@
 package hungry.client;
 
 import hungry.init.Mod;
+import hungry.init.ProgressTracker;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -17,7 +18,8 @@ public class HungryHudRenderer {
         if (client.player == null) return;
 
         // Check if the player has a progress tracker
-        if (!Mod.TRACKER.isActive()) return;
+        ProgressTracker t = Mod.TRACKER;
+        if (!t.isActive()) return;
 
         int screenWidth = client.getWindow().getScaledWidth();
         int screenHeight = client.getWindow().getScaledHeight();
@@ -26,13 +28,14 @@ public class HungryHudRenderer {
         int barWidth = 180;
         int barHeight = 2;
         int x = (screenWidth - barWidth) / 2;
-        int y = screenHeight - 44;
+        int y = screenHeight - 65;
 
         // Draw background
         context.fill(x, y, x + barWidth, y + barHeight, 0xFF000000); // Black background
 
         // Draw progress
-        int progressWidth = (int) ((Mod.TRACKER.getProgress() / (float) Mod.TRACKER.getMaxProgress()) * barWidth);
-        context.fill(x, y, x + progressWidth, y + barHeight, Mod.TRACKER.isBleeding() ? 0xFFFF5555 : 0xFF00b1ff); // Red progress
+        long dTime = Math.max(0, t.getBleedTime() - System.currentTimeMillis());
+        int progressWidth = (int)(dTime * barWidth / (t.getBleedTime() - t.getStartTime()));
+        context.fill(x, y, x + progressWidth, y + barHeight, t.isBleeding() ? 0xFFFF5555 : 0xFF00b1ff); // Red progress
     }
 }

@@ -3,44 +3,33 @@ package hungry.init;
 import net.minecraft.entity.player.HungerManager;
 
 public class ProgressTracker {
-    private int progress;
-    private int maxProgress;
+    private long bleedTime;
+    private long startTime;
     private boolean active;
     private boolean isBleeding;
 
-    public ProgressTracker(int maxProgress) {
-        this.maxProgress = maxProgress;
-        this.progress = maxProgress;
+    public ProgressTracker() {
         this.active = false;
     }
 
     public void reset(HungerManager hg) {
-        this.maxProgress = 80 + Math.round((hg.getFoodLevel() + hg.getSaturationLevel()) * 2.77f);
-        this.progress = maxProgress;
+        this.startTime = System.currentTimeMillis();
+        this.bleedTime = startTime + (80 + Math.round((hg.getFoodLevel() + hg.getSaturationLevel()) * 2.77)) * 50;
         this.isBleeding = false;
     }
 
-    public void reduceProgress(int amount) {
-        if (active) {
-            this.progress = Math.max(this.progress - amount, 0);
-            if (progress == 0) {
-                startBleeding();
-            }
-        }
-    }
-
     public void startBleeding() {
-        maxProgress = 80;
-        progress = maxProgress;
+        startTime = System.currentTimeMillis();
+        bleedTime = startTime + 4000;
         isBleeding = true;
     }
 
-    public int getProgress() {
-        return progress;
+    public long getBleedTime() {
+        return bleedTime;
     }
 
-    public int getMaxProgress() {
-        return maxProgress;
+    public long getStartTime() {
+        return startTime;
     }
 
     public boolean isActive() {

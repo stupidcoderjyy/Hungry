@@ -15,21 +15,17 @@ import net.minecraft.text.Text;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class Mod implements ModInitializer {
-    public static final ProgressTracker TRACKER = new ProgressTracker(100);
+    public static final ProgressTracker TRACKER = new ProgressTracker();
     public static ServerPlayerEntity player;
 
     @Override
     public void onInitialize() {
         // Register the /starve command
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(literal("starve").executes(this::starveSelf));
-        });
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                dispatcher.register(literal("starve").executes(this::starveSelf)));
 
         // Handle the progress bar shrinking over time
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-                if (TRACKER.isActive()) {
-                    TRACKER.reduceProgress(1); // Reduce progress by 1 each tick
-                }
                 if (player != null && player.isAlive() && !player.isRemoved()) {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.HUNGER, -1, 255, true, false, false));
                 }
